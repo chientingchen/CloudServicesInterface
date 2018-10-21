@@ -111,7 +111,6 @@ def index_post():
  
     for cloudvendor in data['lstQueryCloudVendors']:
         cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], cloudvendor['user'] if len(cloudvendor['user']) > 0 else 'default', cloudvendor['lst_instance_states'])
-        #cloudconnector = FactoryCloudConnector(cloudvendor)
         ret_dict.update({ cloudvendor['vendor']: str(cloudconnector.get_num_instances_based_on_states()) })
 
     return json.dumps(ret_dict)

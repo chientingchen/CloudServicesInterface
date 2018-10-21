@@ -18,8 +18,11 @@ Q1. Why do you adding additional field `lst_instance_states` in restful request 
 Q2. Why do you adding additional field `user` in restful request for filtering different instances states?
 * Ans: For making sure user can use specific profile to query the corresponding information
 
-Q3. What's the availble options in lst_instance_states?
+Q3. What's the availble options in lst_instance_states field?
 * Ans: I'm only implementing this interface based on AWS only, and thus available options would be the options which AWS supported in boto3 API, which including **(pending | running | shutting-down | terminated | stopping | stopped )**
+
+Q4. What's the avalable region options in region field?
+* Ans: As I mentioned above, this demo is focusing on AWS only for now, thus available options would the options which AWS supported in boto3 API, which listed at [AWS document](https://docs.aws.amazon.com/en_us/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html)
 
 ## Usage  
 1. Please provide valid user credentials in credential.yaml, below is a basic example.

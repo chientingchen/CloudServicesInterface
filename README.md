@@ -21,8 +21,17 @@ Q2. Why do you adding additional field `user` in restful request for filtering d
 Q3. What's the availble options in lst_instance_states?
 * Ans: I'm only implementing this interface based on AWS only, and thus available options would be the options which AWS supported in boto3 API, which including **(pending | running | shutting-down | terminated | stopping | stopped )**
 
-## Usage
+Q4. Why region name is not needed in restful request API?
+* Ans: I don't have much experience on cloud service integration, and I do not intend to handle it since this is just a demo version.
 
+## Usage
+0. Please provide AWS region name at **~/.aws/config**, following is an example.
+
+  ```
+  [default]
+  region=us-east-1
+  ```
+  
 1. Please provide valid user credentials in credential.yaml, below is a basic example.
 
 ```

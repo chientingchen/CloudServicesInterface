@@ -88,6 +88,11 @@ root@flask-demo:~/aws_test# python CloudInterface.py
   ```
 
   * Note that if user didn't specify any user account information like below, CloudInterface would use `default` profile credential in `credential.yaml` to access cloud service.
-  
+
+## Contact author
+
+* **Chien-Ting(Jaxon) Chen** - *Initial work* - [CloudInteface](https://github.com/chientingchen/CloudServicesInterface)
+* Please contact me whenever you have any question/issue with setting it up.
+
  
 

@@ -18,6 +18,9 @@ Q1. Why do you adding additional field `lst_instance_states` in restful request 
 Q2. Why do you adding additional field `user` in restful request for filtering different instances states?
 * Ans: For making sure user can use specific profile to query the corresponding information
 
+Q3. What's the availble options in lst_instance_states?
+* Ans: I'm only implementing this interface based on AWS only, and thus available options would be the options which AWS supported in boto3 API, which including **(pending | running | shutting-down | terminated | stopping | stopped )**
+
 ## Usage
 
 1. Please provide valid user credentials in credential.yaml, below is a basic example.
@@ -28,6 +31,8 @@ AWS: //Fixed field, indicating credential below is using for AWS cloud service c
     AccessKeyID: "Your AccessKeyID"
     SecretAccessKey: "Your SecretAccessKey"
 ```
+
+* Note that **credential.yaml** should be at the same directory as **CloudInterface.py** is located.
 
 2. Starting flask server, flask server should be ready for accepting restful request from **`http://<your IP>:8080`**
   

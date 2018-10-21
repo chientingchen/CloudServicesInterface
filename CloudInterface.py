@@ -106,9 +106,11 @@ def index_post():
     if len(data['lstQueryCloudVendors']) == 0: #Adding new default vendor informtaion here.
         data['lstQueryCloudVendors'].append({"vendor":"AWS","user":"default","lst_instance_states":[]})
         data['lstQueryCloudVendors'].append({"vendor":"Azure","user":"default", "lst_instance_states":[]})
+
+    
  
     for cloudvendor in data['lstQueryCloudVendors']:
-        cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], cloudvendor['user'], cloudvendor['lst_instance_states'])
+        cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], cloudvendor['user'] if len(cloudvendor['user']) > 0 else 'default', cloudvendor['lst_instance_states'])
         #cloudconnector = FactoryCloudConnector(cloudvendor)
         ret_dict.update({ cloudvendor['vendor']: str(cloudconnector.get_num_instances_based_on_states()) })
 

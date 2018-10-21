@@ -5,12 +5,14 @@ from config import DevConfig
 class BaseCloudConnector(object):
     cloud_vendor_name = None
     user_profile_name = None
+    region_name = None
     _CREDENTIAL_FILE_PATH = './'
     _CREDENTIAL_FILE_NAME = 'credential.yaml'
 
-    def __init__(self, user_profile_name, lst_instance_states):
+    def __init__(self, user_profile_name, region_name, lst_instance_states):
         self.lst_instance_states = lst_instance_states
         self.user_profile_name = user_profile_name
+        self.region_name = region_name
 
     def _get_credentials(self):
         raise NotImplementedError()
@@ -45,7 +47,7 @@ class AWSCloudConnector(BaseCloudConnector):
                   aws_access_key_id = self._get_credentials()['AccessKeyID'],
                   aws_secret_access_key= self._get_credentials()['SecretAccessKey'],
                  )
-        client = session.client('ec2')
+        client = session.client('ec2', region_name=self.region_name)
 
         dict_filters = {'Name': 'instance-state-name','Values': []}
         for value in self.lst_instance_states:
@@ -72,16 +74,17 @@ class AzureCloudConnector(BaseCloudConnector): #Create another cloud connector b
 class FactoryCloudConnector(object):
     lst_CloudConnectors = [AWSCloudConnector, AzureCloudConnector] #Adding extra cloud connector class here.
 
-    def __init__(self, cloud_vendor_name, user_profile_name, lst_instance_states=[]):
+    def __init__(self, cloud_vendor_name, user_profile_name, region_name, lst_instance_states=[]):
         self.lst_instance_states = lst_instance_states
         self.cloud_vendor_name = cloud_vendor_name
         self.user_profile_name = user_profile_name
+        self.region_name = region_name
         self.cloudconnector = self.choose_cloud_connector()
 
     def choose_cloud_connector(self):
         for CloudConnector in self.lst_CloudConnectors:
             if CloudConnector.CloudConnectorBasedOnName(self.cloud_vendor_name): 
-                return CloudConnector(self.user_profile_name, self.lst_instance_states)
+                return CloudConnector(self.user_profile_name, self.region_name, self.lst_instance_states)
 
     def get_num_instances_based_on_states(self):
         return self.cloudconnector.get_num_instances_based_on_states()
@@ -104,17 +107,19 @@ def index_post():
     ret_dict = {}
 
     if len(data['lstQueryCloudVendors']) == 0: #Adding new default vendor informtaion here.
-        data['lstQueryCloudVendors'].append({"vendor":"AWS","user":"default","lst_instance_states":[]})
-        data['lstQueryCloudVendors'].append({"vendor":"Azure","user":"default", "lst_instance_states":[]})
+        data['lstQueryCloudVendors'].append({"vendor":"AWS","user":"default","region":"us-east-1","lst_instance_states":[]})
+        data['lstQueryCloudVendors'].append({"vendor":"Azure","user":"default","region":"us-east-1", "lst_instance_states":[]})
 
     
  
     for cloudvendor in data['lstQueryCloudVendors']:
-        cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], cloudvendor['user'] if len(cloudvendor['user']) > 0 else 'default', cloudvendor['lst_instance_states'])
+        cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], 
+                                               cloudvendor['user'] if len(cloudvendor['user']) > 0 else 'default', 
+                                               cloudvendor['region'] if len(cloudvendor['region'])>0 else 'us-east-1', 
+                                               cloudvendor['lst_instance_states'])
         ret_dict.update({ cloudvendor['vendor']: str(cloudconnector.get_num_instances_based_on_states()) })
 
     return json.dumps(ret_dict)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
-

@@ -21,17 +21,7 @@ Q2. Why do you adding additional field `user` in restful request for filtering d
 Q3. What's the availble options in lst_instance_states?
 * Ans: I'm only implementing this interface based on AWS only, and thus available options would be the options which AWS supported in boto3 API, which including **(pending | running | shutting-down | terminated | stopping | stopped )**
 
-Q4. Why region name is not needed in restful request API?
-* Ans: I don't have much experience on cloud service integration, and I do not intend to handle it since this is just a demo version.
-
-## Usage
-0. Please provide AWS region name at **~/.aws/config**, following is an example.
-
-  ```
-  [default]
-  region=us-east-1
-  ```
-  
+## Usage  
 1. Please provide valid user credentials in credential.yaml, below is a basic example.
 
 ```
@@ -71,11 +61,13 @@ root@flask-demo:~/aws_test# python CloudInterface.py
         {
           "vendor":"AWS",
           "user":"default",
+          "region":"",
           "lst_instance_states":[]
         },
         {
           "vendor":"Azure",
           "user":"default",
+          "region":"",
           "lst_instance_states":[]
         }
       ]
@@ -90,18 +82,21 @@ root@flask-demo:~/aws_test# python CloudInterface.py
         {
           "vendor":"AWS",
           "user":"default",
+          "region":"",
           "lst_instance_states":["running"]
         },
         {
           "vendor":"Azure",
           "user":"default",
+          "region":"",
           "lst_instance_states":["running"]
         }
       ]
    }
   ```
 
-  * Note that if user didn't specify any user account information like below, CloudInterface would use `default` profile credential in `credential.yaml` to access cloud service.
+  * Note that if user didn't specify any user account information in **user** field, CloudInterface would use `default` profile credential in `credential.yaml` to access cloud service.
+  * Note that if user didn't specify any regional information in **region** field, CloudInterface would use **us-east-1** as default.
 
 ## Contact author
 

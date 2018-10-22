@@ -98,11 +98,6 @@ def index():
 
 @app.route('/',methods=['POST'])
 def index_post():
-    print 'data:'
-    print '----------------------------data---------------------------------'
-    print request.get_json()
-    data = request.get_json()
-    print '----------------------------end of data--------------------------'
 
     ret_dict = {}
 

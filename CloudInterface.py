@@ -8,11 +8,16 @@ class BaseCloudConnector(object):
     region_name = None
     _CREDENTIAL_FILE_PATH = './'
     _CREDENTIAL_FILE_NAME = 'credential.yaml'
+    _DEFAULT_DATA_FILE_PATH = None #Default file information may differ from each cloud vendor.
+    _DEFAULT_DATA_FILE_NAME = None #Which need to be handled by child class.
 
     def __init__(self, user_profile_name, region_name, lst_instance_states):
         self.lst_instance_states = lst_instance_states
         self.user_profile_name = user_profile_name
         self.region_name = region_name
+
+    def _get_default_region_and_states(self):
+        raise NotImplementedError()
 
     def _get_credentials(self):
         raise NotImplementedError()
@@ -27,6 +32,9 @@ class BaseCloudConnector(object):
 class AWSCloudConnector(BaseCloudConnector):
     
     cloud_vendor_name = 'AWS'
+    _DEFAULT_DATA_FILE_PATH = './'
+    _DEFAULT_DATA_FILE_NAME = 'AWS_default.yaml'
+    _DEFAULT_USER_PROFILE_NAME = 'default'
 
     def _get_credentials(self):
         
@@ -42,11 +50,28 @@ class AWSCloudConnector(BaseCloudConnector):
         
         return dict_credentials
 
+    def _get_default_region_and_states(self):
+        #For each cloud connector, default setting may vary from one to another.
+        f = open(os.path.join(self._DEFAULT_DATA_FILE_PATH, self._DEFAULT_DATA_FILE_NAME))
+        data = f.read()
+        INPUT_DATA = yaml.load(data)
+        f.close()
+        
+        self.user_profile_name = self._DEFAULT_USER_PROFILE_NAME
+        self.region_name = INPUT_DATA['DefaultRegion']
+        self.lst_instance_states = INPUT_DATA['DefaultStates'].split(',')
+
     def get_num_instances_based_on_states(self):
+        
+        #Handling default values.
+        if len(self.region_name) == 0:
+            self._get_default_region_and_states()
+   
         session = boto3.Session(
                   aws_access_key_id = self._get_credentials()['AccessKeyID'],
                   aws_secret_access_key= self._get_credentials()['SecretAccessKey'],
                  )
+        
         client = session.client('ec2', region_name=self.region_name)
 
         dict_filters = {'Name': 'instance-state-name','Values': []}
@@ -55,11 +80,8 @@ class AWSCloudConnector(BaseCloudConnector):
 
         lst_filters = [dict_filters]
 
-        if len(self.lst_instance_states) > 0:
-            json_aws_ret = client.describe_instances(Filters=lst_filters)
-        else:
-            json_aws_ret = client.describe_instances()
-
+        json_aws_ret = client.describe_instances(Filters=lst_filters)
+        
         return len(json_aws_ret['Reservations'])
 
 class AzureCloudConnector(BaseCloudConnector): #Create another cloud connector based on base class.
@@ -98,19 +120,24 @@ def index():
 
 @app.route('/',methods=['POST'])
 def index_post():
+    print 'data:'
+    print '----------------------------data---------------------------------'
+    print request.get_json()
+    data = request.get_json()
+    print '----------------------------end of data--------------------------'
 
     ret_dict = {}
 
     if len(data['lstQueryCloudVendors']) == 0: #Adding new default vendor informtaion here.
-        data['lstQueryCloudVendors'].append({"vendor":"AWS","user":"default","region":"us-east-1","lst_instance_states":[]})
-        data['lstQueryCloudVendors'].append({"vendor":"Azure","user":"default","region":"us-east-1", "lst_instance_states":[]})
+        data['lstQueryCloudVendors'].append({"vendor":"AWS","user":"","region":"","lst_instance_states":[]}) #It's okay to add default information here, or you want to have better isolation structure, you can customize it in child class.
+        data['lstQueryCloudVendors'].append({"vendor":"Azure","user":"","region":"", "lst_instance_states":[]}) #I'm using another file to store default information here.
 
     
  
     for cloudvendor in data['lstQueryCloudVendors']:
         cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], 
-                                               cloudvendor['user'] if len(cloudvendor['user']) > 0 else 'default', 
-                                               cloudvendor['region'] if len(cloudvendor['region'])>0 else 'us-east-1', 
+                                               cloudvendor['user'], 
+                                               cloudvendor['region'],
                                                cloudvendor['lst_instance_states'])
         ret_dict.update({ cloudvendor['vendor']: str(cloudconnector.get_num_instances_based_on_states()) })
 

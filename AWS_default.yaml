@@ -1,0 +1,2 @@
+DefaultRegion: "us-east-1"
+DefaultStates: "running,stopped,pending,shutting-down,terminated,stopping"

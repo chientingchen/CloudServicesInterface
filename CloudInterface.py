@@ -16,9 +16,6 @@ class BaseCloudConnector(object):
         self.user_profile_name = user_profile_name
         self.region_name = region_name
 
-    def _get_default_region_and_states(self):
-        raise NotImplementedError()
-
     def _get_credentials(self):
         raise NotImplementedError()
        
@@ -50,22 +47,33 @@ class AWSCloudConnector(BaseCloudConnector):
         
         return dict_credentials
 
-    def _get_default_region_and_states(self):
+    def _get_default_region(self):
         #For each cloud connector, default setting may vary from one to another.
         f = open(os.path.join(self._DEFAULT_DATA_FILE_PATH, self._DEFAULT_DATA_FILE_NAME))
         data = f.read()
         INPUT_DATA = yaml.load(data)
         f.close()
         
-        self.user_profile_name = self._DEFAULT_USER_PROFILE_NAME
         self.region_name = INPUT_DATA['DefaultRegion']
-        self.lst_instance_states = INPUT_DATA['DefaultStates'].split(',')
+    
+    def _get_default_lst_instance_states(self):
+        #For each cloud connector, default setting may vary from one to another.
+        f = open(os.path.join(self._DEFAULT_DATA_FILE_PATH, self._DEFAULT_DATA_FILE_NAME))
+        data = f.read()
+        INPUT_DATA = yaml.load(data)
+        f.close()
 
+        self.lst_instance_states = INPUT_DATA['DefaultStates'].split(',')
+        
     def get_num_instances_based_on_states(self):
         
         #Handling default values.
+        if len(self.user_profile_name) == 0:
+            self.user_profile_name = self._DEFAULT_USER_PROFILE_NAME
         if len(self.region_name) == 0:
-            self._get_default_region_and_states()
+            self._get_default_region()
+        if len(self.lst_instance_states) == 0:
+            self._get_default_lst_instance_states()
    
         session = boto3.Session(
                   aws_access_key_id = self._get_credentials()['AccessKeyID'],

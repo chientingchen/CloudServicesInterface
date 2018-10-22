@@ -28,8 +28,16 @@ Q5. Why your design it with **HTTP POST action** instead of **GET**?
 * Ans: From my point of view, if frontend can feed the data with a json array, it's going to be much more flexible for a single interface since all cloud vendor's information is aggregated into a json object. I can also make multiple **HTTP GET** actions and each of them handle one cloud vendor's information, but the requirements I have here is asking me to create **一個Restful/Graph Interface** to accomplish the tasks and thus I made it a HTTP POST here. 
 
 ## Usage  
-1. Please provide valid user credentials in credential.yaml, below is a basic example.
+0. Please provide the default value in **AWS_default.yaml**, below is a basic example
+```
+DefaultRegion: "us-east-1"
+DefaultStates: "running,stopped,pending,shutting-down,terminated,stopping"
+```
 
+* Note that all fields in this file is a **MUST HAVE** information for cloud connector to query cloud service at default mode.
+* Note that you should add another file for preparing default value while adding other cloud connector class. I'm not encourage user to set default value inside flask restful controller.
+
+1. Please provide valid user credentials in credential.yaml, below is a basic example.
 ```
 AWS: //Fixed field, indicating credential below is using for AWS cloud service connection.
   default: //user profile name, you can specify your own name, default is a MUST since it'll be used when there's no user profile preference in restful request.
@@ -38,6 +46,7 @@ AWS: //Fixed field, indicating credential below is using for AWS cloud service c
 ```
 
 * Note that **credential.yaml** should be at the same directory as **CloudInterface.py** is located.
+* Note that **default** user profile is a **MUST HAVE** field for default scenario.
 
 2. Starting flask server, flask server should be ready for accepting restful request from **`http://<your IP>:8080`**
   

@@ -111,7 +111,8 @@ root@flask-demo:~/aws_test# python CloudInterface.py
   ```
 
   * Note that if user didn't specify any user account information in **user** field, CloudInterface would use `default` profile credential in `credential.yaml` to access cloud service.
-  * Note that if user didn't specify any regional information in **region** field, CloudInterface would use regional information in **AWS_default.yaml** as default.
+  * Note that if user didn't specify any regional information in **region** field, AWS CloudInterface would use regional information in **AWS_default.yaml** as default.
+  * Note taht if user didn't specfiy any instances states in lst_instance_states, AWS CloudInterface would use states information in **AWS_default.yaml** as default.
 
 ## Contact author
 

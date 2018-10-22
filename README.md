@@ -25,7 +25,7 @@ Q4. What's the avalable region options in region field?
 * Ans: As I mentioned above, this demo is focusing on AWS only for now, thus available options would the options which AWS supported in boto3 API, which listed at [AWS document](https://docs.aws.amazon.com/en_us/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html)
 
 Q5. Why your design it with **HTTP POST action** instead of **GET**?
-* Ans: From my point of view, if frontend can feed the data with a json array, it's going to be much more flexible for a single interface since all cloud vendor's information is aggregated into a json object. I can also make multiple **HTTP GET** actions and each of them handle one cloud vendor's information, but the requirements I have here is asking me to create **一個Restful/Graph Interface** to accomplish the tasks and thus I made it a HTTP POST here. 
+* Ans: From my point of view, if frontend can feed the data with a json array, it's going to be much more flexible for a single interface since all cloud vendor's information is aggregated into a json object. I can also make multiple **HTTP GET** actions and each of them handle one cloud vendor's information, but the requirements I have here is asking me to create **一個**Restful/Graph Interface to accomplish the tasks and thus I made it a HTTP POST here. 
 
 ## Usage  
 0. Please provide the default value in **AWS_default.yaml**, below is a basic example

@@ -101,7 +101,7 @@ class AzureCloudConnector(BaseCloudConnector): #Create another cloud connector b
     def get_num_instances_based_on_states(self):
         return 123
 
-class FactoryCloudConnector(object):
+class CloudConnectorFactory(object):
     lst_CloudConnectors = [AWSCloudConnector, AzureCloudConnector] #Adding extra cloud connector class here.
 
     def __init__(self, cloud_vendor_name, user_profile_name, region_name, lst_instance_states=[]):
@@ -143,7 +143,7 @@ def index_post():
     
  
     for cloudvendor in data['lstQueryCloudVendors']:
-        cloudconnector = FactoryCloudConnector(cloudvendor['vendor'], 
+        cloudconnector = CloudConnectorFactory(cloudvendor['vendor'], 
                                                cloudvendor['user'], 
                                                cloudvendor['region'],
                                                cloudvendor['lst_instance_states'])

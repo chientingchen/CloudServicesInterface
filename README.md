@@ -27,6 +27,9 @@ Q4. What's the avalable region options in region field?
 Q5. Why your design it with **HTTP POST action** instead of **GET**?
 * Ans: From my point of view, if frontend can feed the data with a json array, it's going to be much more flexible for a single interface since all cloud vendor's information is aggregated into a json object. I can also make multiple **HTTP GET** actions and each of them handle one cloud vendor's information, but the requirements I have here is asking me to create **一個**Restful/Graph Interface to accomplish the tasks and thus I made it a HTTP POST here. 
 
+Q6. Where is unit test?
+* Ans: Due to limited effort, unit test is NOT implmented here. I highly notice the importance of unit test but I'm not capaple to finish it in time.
+
 ## Usage  
 0. Please provide the default value in **AWS_default.yaml**, below is a basic example
 ```
